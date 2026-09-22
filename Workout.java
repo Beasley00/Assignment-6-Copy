@@ -29,4 +29,3 @@ public class Workout extends TrainingSessions
         return super.toString() + ", Type: Workout, Workout: " + workout;
     }
 }
-
