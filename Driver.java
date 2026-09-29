@@ -2,27 +2,73 @@
 
 // testing github collaboration
 
+import java.util.Scanner;
+
 public class Driver 
 {
     public static void main(String[] args) 
     {
-        // Create sample objects for each type of training session
-        NormalPractice mondayEasy = new NormalPractice("6:30 AM", "09/21/2026", 6.0);
-        Workout tuesdayIntervals = new Workout("7:00 AM", "09/22/2026", "6x1000m Repeats @ 3:15 pace");
-        NormalPractice wednesdayDouble = new NormalPractice("6:30 AM", "09/23/2026", 7.0, true, 3.5);
-        Workout thursdayTempo = new Workout("7:00 AM", "09/24/2026", "4 Mile Tempo Run");
-        NormalPractice fridayRecovery = new NormalPractice("6:30 AM", "09/25/2026", 5.0);
-        LongRun saturdayLongRun = new LongRun("8:00 AM", "09/26/2026", 14.0);
+        Scanner scanner = new Scanner(System.in);
 
-        // Polymorphic array storing all training session objects
-        TrainingSessions[] sessions = {
-            mondayEasy,
-            tuesdayIntervals,
-            wednesdayDouble,
-            thursdayTempo,
-            fridayRecovery,
-            saturdayLongRun
-        };
+        System.out.println("How many training sessions would you like to enter?");
+        int sessionCount = scanner.nextInt();
+        scanner.nextLine();
+
+        TrainingSessions[] sessions = new TrainingSessions[sessionCount];
+
+        for (int sessionIndex = 0; sessionIndex < sessionCount; sessionIndex++)
+        {
+            System.out.println("\nEnter information for session #" + (sessionIndex + 1));
+            System.out.print("Session type (normal, workout, or long run): ");
+            String sessionType = scanner.nextLine().trim().toLowerCase();
+            System.out.print("Date: ");
+            String date = scanner.nextLine();
+            System.out.print("Start time: ");
+            String startTime = scanner.nextLine();
+
+            if (sessionType.equals("normal"))
+            {
+                System.out.print("Miles: ");
+                double miles = scanner.nextDouble();
+                scanner.nextLine();
+                System.out.print("Is there a double run? (yes/no): ");
+                boolean hasDoubleRun = scanner.nextLine().trim().equalsIgnoreCase("yes");
+                double doubleMileage = 0.0;
+
+                if (hasDoubleRun)
+                {
+                    System.out.print("Double-run miles: ");
+                    doubleMileage = scanner.nextDouble();
+                    scanner.nextLine();
+                }
+
+                sessions[sessionIndex] = new NormalPractice(startTime, date, miles, hasDoubleRun, doubleMileage);
+            }
+            else if (sessionType.equals("workout"))
+            {
+                System.out.print("Workout description: ");
+                String workout = scanner.nextLine();
+                System.out.print("Miles: ");
+                double miles = scanner.nextDouble();
+                scanner.nextLine();
+                sessions[sessionIndex] = new Workout(startTime, date, workout, miles);
+            }
+            else if (sessionType.equals("long run") || sessionType.equals("longrun"))
+            {
+                System.out.print("Miles: ");
+                double miles = scanner.nextDouble();
+                scanner.nextLine();
+                sessions[sessionIndex] = new LongRun(startTime, date, miles);
+            }
+            else
+            {
+                System.out.println("Invalid session type. Please restart and choose normal, workout, or long run.");
+                scanner.close();
+                return;
+            }
+        }
+
+        scanner.close();
 
         System.out.println("==================================================");
         System.out.println("           WEEKLY TRAINING SESSIONS LOG           ");
@@ -47,17 +93,18 @@ public class Driver
             if (session instanceof NormalPractice) 
             {
                 NormalPractice practice = (NormalPractice) session;
-                totalMileage += practice.getMiles();
+                totalMileage += practice.getMiles(true);
                 normalPracticeCount++;
 
                 if (practice.hasDoubleRun()) 
                 {
-                    totalMileage += practice.getDoubleMileage();
                     doubleRunCount++;
                 }
             } 
             else if (session instanceof Workout) 
             {
+                Workout workout = (Workout) session;
+                totalMileage += workout.getMiles();
                 workoutCount++;
             } 
             else if (session instanceof LongRun) 

@@ -38,6 +38,16 @@ public class NormalPractice extends TrainingSessions
         return miles;
     }
 
+    public double getMiles(boolean includeDoubleRun)
+    {
+        if (includeDoubleRun && hasDoubleRun)
+        {
+            return miles + doubleMileage;
+        }
+
+        return miles;
+    }
+
     public void setMiles(double miles) 
     {
         this.miles = miles;
